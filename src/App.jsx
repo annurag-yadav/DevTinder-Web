@@ -14,11 +14,12 @@ function App() {
     {/* use store to provide the state to the entire app */}
    
     <Routes>
-      <Route path="/" element={<Body />} />
-       <Route path="/" element={<Feed />} />
-       <Route path="/login" element={<Login />} />
-       <Route path="/profile" element={<Profile />} />
-    </Routes>
+  <Route path="/" element={<Body />}>
+    <Route path="/" element={<Feed />} />
+    <Route path="/login" element={<Login />} />
+    <Route path="/profile" element={<Profile />} />
+  </Route>
+</Routes>
     </BrowserRouter>
     </Provider>
     </>
