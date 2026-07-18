@@ -15,7 +15,7 @@ const NavBar = () => {
        await axios.post(BaseURL + "/logout", {}, {
         withCredentials: true,
       });
-      dispatch(removeUser());
+      dispatch(removeUser()); // Remove user data from Redux store after logout
       return <Navigate to="/login" />;
 
 

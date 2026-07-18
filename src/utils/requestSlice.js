@@ -6,6 +6,8 @@ const requestSlice = createSlice({
   reducers: {
     addRequests: (state, action) => action.payload,
     removeRequest: (state, action) => {
+      // Filter out the request with the specified ID from the state array and 
+      // return a new array without that request.
       const newArray = state.filter((r) => r._id !== action.payload);
       return newArray;
     },

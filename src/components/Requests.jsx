@@ -15,7 +15,7 @@ const Requests = () => {
         {},
         { withCredentials: true }
       );
-      dispatch(removeRequest(_id));
+      dispatch(removeRequest(_id)); // Remove the request from the Redux store after reviewing
     } catch (err) {
          console.error(err);
     }
@@ -46,6 +46,10 @@ const Requests = () => {
     <div className="text-center my-10">
       <h1 className="text-bold text-white text-3xl">Connection Requests</h1>
 
+      // Render the list of requests using the map function. Each request is displayed 
+      with its details and "Accept" and "Reject" buttons that allow the user to review
+      the request.
+
       {requests.map((request) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
           request.fromUserId;
@@ -58,7 +62,7 @@ const Requests = () => {
             <div>
               <img
                 alt="photo"
-                className="w-20 h-20 rounded-full"
+                className="w-20 h-20 rounded-full mx-4"
                 src={photoUrl}
               />
             </div>

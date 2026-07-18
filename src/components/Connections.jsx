@@ -31,6 +31,10 @@ const Connections = () => {
     <div className="text-center my-10">
       <h1 className="text-bold text-white text-3xl">Connections</h1>
 
+  // Render the list of connections using the map function. Each connection is 
+     displayed with its details and a "Chat" button that links to the chat page
+     for that connection. 
+     
       {connections.map((connection) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
           connection;

@@ -14,7 +14,7 @@ const EditProfile = ({ user }) => {
   const [about, setAbout] = useState(user.about || "");
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-  const [showToast, setShowToast] = useState(false);
+  const [showToast, setShowToast] = useState(false); // 
 
   const saveProfile = async () => {
     //Clear Errors
@@ -33,9 +33,9 @@ const EditProfile = ({ user }) => {
         { withCredentials: true }
       );
       dispatch(addUser(res?.data?.data));
-      setShowToast(true);
+      setShowToast(true); // Show the toast notification
       setTimeout(() => {
-        setShowToast(false);
+        setShowToast(false); // Hide the toast notification after 3 seconds
       }, 3000);
     } catch (err) {
       setError(err.response.data);
