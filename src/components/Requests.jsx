@@ -46,9 +46,9 @@ const Requests = () => {
     <div className="text-center my-10">
       <h1 className="text-bold text-white text-3xl">Connection Requests</h1>
 
-      // Render the list of requests using the map function. Each request is displayed 
+       {/* Render the list of requests using the map function. Each request is displayed 
       with its details and "Accept" and "Reject" buttons that allow the user to review
-      the request.
+      the request. */}
 
       {requests.map((request) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
