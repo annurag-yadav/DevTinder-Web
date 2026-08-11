@@ -3,22 +3,23 @@ import { useParams } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
 import { useSelector } from "react-redux";
 import axios from "axios";
-import { BASE_URL } from "../utils/constants";
+import { BaseURL } from "../utils/constants";
 
 const Chat = () => {
-  const { targetUserId } = useParams();
+  const { targetUserId } = useParams(); // Get the targetUserId from the URL parameters
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const user = useSelector((store) => store.user);
   const userId = user?._id;
 
   const fetchChatMessages = async () => {
-    const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+    const chat = await axios.get(BaseURL + "/chat/" + targetUserId, {
       withCredentials: true,
     });
 
     console.log(chat.data.messages);
 
+    // Map the chat messages to include sender information
     const chatMessages = chat?.data?.messages.map((msg) => {
       const { senderId, text } = msg;
       return {
@@ -34,7 +35,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (!userId) {
+    if (!userId) { // If userId is not available, do not establish a socket connection
       return;
     }
     const socket = createSocketConnection();
@@ -48,6 +49,7 @@ const Chat = () => {
     socket.on("messageReceived", ({ firstName, lastName, text }) => {
       console.log(firstName + " :  " + text);
       setMessages((messages) => [...messages, { firstName, lastName, text }]);
+      // Update the messages state with the new message received
     });
 
     return () => {
@@ -78,6 +80,7 @@ const Chat = () => {
               className={
                 "chat " +
                 (user.firstName === msg.firstName ? "chat-end" : "chat-start")
+                // Determine the chat message alignment based on the sender
               }
             >
               <div className="chat-header">

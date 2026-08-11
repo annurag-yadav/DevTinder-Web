@@ -1,5 +1,6 @@
 import {BrowserRouter, Routes, Route } from "react-router-dom";
 import Body from "./components/Body";
+import ResetPassword from "./components/ResetPassword";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
 import { Provider } from "react-redux";
@@ -27,6 +28,9 @@ function App() {
               <Route path="/premium" element={<Premium />} />
               <Route path="/chat/:targetUserId" element={<Chat />} />
             </Route>
+
+            <Route path="/reset-password" element={<ResetPassword />} />
+
 </Routes>
     </BrowserRouter>
     </Provider>

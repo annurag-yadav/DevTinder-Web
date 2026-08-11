@@ -4,4 +4,6 @@
 
 //making the url dynamic based on the environment
 
-export const BaseURL = location.hostname === "localhost" ? "http://localhost:3000" : "/api";
+const API_BASE_URL = location.hostname === "localhost" ? "http://localhost:3000" : "/api";
+
+export const BaseURL = API_BASE_URL;
