@@ -25,7 +25,11 @@ const Login = () => {
       );
       dispatch(addUser(res.data));
        // Update the user state in Redux store
-      return navigate("/");
+      if (res.data.profileCompleted) {
+         navigate("/");
+      } else {
+        navigate("/profile/setup");
+      }
     } catch (err) {
         setError(err.response?.data || "Login failed. Please try again.");
         console.error(err);
@@ -40,7 +44,7 @@ const Login = () => {
         { withCredentials: true }
       );
       dispatch(addUser(res.data.data));
-      return navigate("/profile");
+      return navigate("/profile/setup");
     } catch (err) {
       setError(err?.response?.data || "Something went wrong");
     }
