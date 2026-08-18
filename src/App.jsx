@@ -3,6 +3,9 @@ import Body from "./components/Body";
 import ResetPassword from "./components/ResetPassword";
 import Login from "./components/Login";
 import Profile from "./components/Profile";
+import ProfileSetup from "./components/ProfileSetup";
+import PublicProfile from "./components/PublicProfile";
+import SearchResults from "./components/SearchResults";
 import { Provider } from "react-redux";
 import appstore from "./utils/appStore";
 import Feed from "./components/Feed";
@@ -10,7 +13,6 @@ import Connections from "./components/Connections";
 import Requests from "./components/Requests";
 import Premium from "./components/Premium";
 import Chat from "./components/Chat";
-import ProfileSetup from "./components/ProfileSetup";
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/profile/setup" element={<ProfileSetup />} />
+              <Route path="/profile/:userId" element={<PublicProfile />} />
+              <Route path="/search" element={<SearchResults />} />
               <Route path="/connections" element={<Connections />} />
               <Route path="/requests" element={<Requests />} />
               <Route path="/premium" element={<Premium />} />

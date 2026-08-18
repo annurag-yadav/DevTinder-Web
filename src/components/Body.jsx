@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
+
 const Body = () => {
 
   const dispatch = useDispatch();
@@ -76,13 +77,17 @@ const Body = () => {
   }, [userData, location.pathname]);
 
 
-  return (
-    <div>
-      <NavBar />
+return (
+  <div className="min-h-screen flex flex-col">
+    <NavBar />
+
+    <main className="flex-1">
       <Outlet />
-      <Footer />
-    </div>
-  );
+    </main>
+
+    <Footer />
+  </div>
+);
 };
 
 export default Body;
