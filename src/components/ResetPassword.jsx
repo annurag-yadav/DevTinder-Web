@@ -1,160 +1,388 @@
 import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import {
+  useSearchParams,
+  useNavigate
+} from "react-router-dom";
 import axios from "axios";
 import { BaseURL } from "../utils/constants";
 
 const ResetPassword = () => {
 
-    // Get token from URL
-    const [searchParams] = useSearchParams();
-    const token = searchParams.get("token");
+  const [searchParams] = useSearchParams();
 
-    // Password states
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
+  const token = searchParams.get("token");
 
-    // Token state
-    const [isTokenValid, setIsTokenValid] = useState(false);
-    const [isCheckingToken, setIsCheckingToken] = useState(true);
-
-    // For redirecting to login
-    const navigate = useNavigate();
-
-    // Verify token when page loads
-    useEffect(() => {
-
-        const verifyToken = async () => {
-            try {
-
-                if (!token) {
-                    setIsTokenValid(false);
-                    setIsCheckingToken(false);
-                    return;
-                }
-
-                const res = await axios.get(
-                    BaseURL + "/reset-password/verify",
-                    {
-                        params: {
-                            token: token
-                        }
-                    }
-                );
-
-                console.log(res.data);
-
-                setIsTokenValid(true);
-
-            } catch (err) {
-
-                console.error("Token verification error:", err);
-
-                setIsTokenValid(false);
-
-            } finally {
-
-                setIsCheckingToken(false);
-
-            }
-        };
-
-        verifyToken();
-
-    }, [token]);
+  const navigate = useNavigate();
 
 
-    // Reset password
-    const handleResetPassword = async () => {
-        try {
+  const [newPassword, setNewPassword] =
+    useState("");
 
-            // Check token
-            if (!token || !isTokenValid) {
-                alert("Invalid or expired password reset link");
-                return;
-            }
+  const [confirmPassword, setConfirmPassword] =
+    useState("");
 
-            // Check passwords
-            if (newPassword !== confirmPassword) {
-                alert("Passwords do not match");
-                return;
-            }
 
-            // Send token and new password to backend
-            const res = await axios.post(
-                BaseURL + "/reset-password",
-                {
-                    token,
-                    newPassword
-                }
-            );
+  const [isTokenValid, setIsTokenValid] =
+    useState(false);
 
-            console.log(res.data);
+  const [isCheckingToken, setIsCheckingToken] =
+    useState(true);
 
-            alert("Password reset successful");
+  const [error, setError] =
+    useState("");
 
-            navigate("/login");
+  const [success, setSuccess] =
+    useState("");
 
-        } catch (err) {
+  const [loading, setLoading] =
+    useState(false);
 
-            console.error("Reset password error:", err);
 
-            alert(
-                err.response?.data?.error ||
-                err.response?.data?.message ||
-                "Something went wrong"
-            );
+  // ================= VERIFY TOKEN =================
+
+  useEffect(() => {
+
+    const verifyToken = async () => {
+
+      try {
+
+        if (!token) {
+
+          setIsTokenValid(false);
+          return;
+
         }
+
+        await axios.get(
+          BaseURL + "/reset-password/verify",
+          {
+            params: {
+              token
+            }
+          }
+        );
+
+        setIsTokenValid(true);
+
+      } catch (err) {
+
+        console.error(
+          "Token verification error:",
+          err
+        );
+
+        setIsTokenValid(false);
+
+      } finally {
+
+        setIsCheckingToken(false);
+
+      }
     };
 
 
-    // While checking token
-    if (isCheckingToken) {
-        return <h2>Checking password reset link...</h2>;
+    verifyToken();
+
+  }, [token]);
+
+
+  // ================= RESET PASSWORD =================
+
+  const handleResetPassword = async () => {
+
+    setError("");
+    setSuccess("");
+
+
+    if (!newPassword || !confirmPassword) {
+
+      setError(
+        "Please enter both passwords."
+      );
+
+      return;
     }
 
 
-    // Token is invalid or expired
-    if (!isTokenValid) {
-        return (
-            <div>
-                <h1>Invalid Password Reset Link</h1>
+    if (newPassword !== confirmPassword) {
 
-                <p>
-                    This password reset link is invalid or has expired.
-                </p>
+      setError(
+        "Passwords do not match."
+      );
 
-                <button onClick={() => navigate("/login")}>
-                    Go to Login
-                </button>
-            </div>
-        );
+      return;
     }
 
 
-    // Token is valid
+    try {
+
+      setLoading(true);
+
+
+      await axios.post(
+        BaseURL + "/reset-password",
+        {
+          token,
+          newPassword
+        }
+      );
+
+
+      setSuccess(
+        "Password reset successfully. Redirecting to login..."
+      );
+
+
+      setTimeout(() => {
+
+        navigate("/login");
+
+      }, 2000);
+
+
+    } catch (err) {
+
+      console.error(
+        "Reset password error:",
+        err
+      );
+
+      setError(
+        err?.response?.data?.error ||
+        err?.response?.data?.message ||
+        "Unable to reset password."
+      );
+
+    } finally {
+
+      setLoading(false);
+
+    }
+  };
+
+
+  // ================= CHECKING TOKEN =================
+
+  if (isCheckingToken) {
+
     return (
-        <div>
-            <h1>Reset Password</h1>
 
-            <input
-                type="password"
-                placeholder="New Password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-            />
+      <div className="flex justify-center my-20">
 
-            <input
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-            />
+        <div className="card bg-base-300 w-96 shadow-xl">
 
-            <button onClick={handleResetPassword}>
-                Reset Password
-            </button>
+          <div className="card-body text-center">
+
+            <span className="loading loading-spinner loading-lg mx-auto"></span>
+
+            <h2 className="text-xl mt-4">
+              Checking reset link...
+            </h2>
+
+          </div>
+
         </div>
+
+      </div>
+
     );
+  }
+
+
+  // ================= INVALID TOKEN =================
+
+  if (!isTokenValid) {
+
+    return (
+
+      <div className="flex justify-center my-20 px-4">
+
+        <div className="card bg-base-300 w-96 shadow-xl">
+
+          <div className="card-body text-center">
+
+            <h2 className="text-2xl font-bold text-error">
+              Invalid Reset Link
+            </h2>
+
+            <p className="opacity-70 mt-3">
+
+              This password reset link is
+              invalid or has expired.
+
+            </p>
+
+
+            <button
+              className="btn btn-primary mt-5"
+              onClick={() =>
+                navigate("/login")
+              }
+            >
+              Go to Login
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    );
+  }
+
+
+  // ================= RESET FORM =================
+
+  return (
+
+    <div className="flex justify-center my-20 px-4">
+
+      <div className="card bg-base-300 w-96 shadow-xl">
+
+        <div className="card-body">
+
+          <h2 className="card-title justify-center text-2xl">
+
+            Reset Password
+
+          </h2>
+
+
+          <p className="text-center opacity-70">
+
+            Create a new password for your
+            TalentLink account.
+
+          </p>
+
+
+          {/* NEW PASSWORD */}
+
+          <label className="form-control w-full my-3">
+
+            <div className="label">
+
+              <span className="label-text">
+                New Password
+              </span>
+
+            </div>
+
+            <input
+              type="password"
+              placeholder="Enter new password"
+              value={newPassword}
+              className="input input-bordered w-full"
+              onChange={(e) =>
+                setNewPassword(
+                  e.target.value
+                )
+              }
+            />
+
+          </label>
+
+
+          {/* CONFIRM PASSWORD */}
+
+          <label className="form-control w-full my-3">
+
+            <div className="label">
+
+              <span className="label-text">
+                Confirm Password
+              </span>
+
+            </div>
+
+            <input
+              type="password"
+              placeholder="Confirm new password"
+              value={confirmPassword}
+              className="input input-bordered w-full"
+              onChange={(e) =>
+                setConfirmPassword(
+                  e.target.value
+                )
+              }
+            />
+
+          </label>
+
+
+          {/* ERROR */}
+
+          {error && (
+
+            <div className="alert alert-error mt-2">
+
+              <span>
+                {error}
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* SUCCESS */}
+
+          {success && (
+
+            <div className="alert alert-success mt-2">
+
+              <span>
+                {success}
+              </span>
+
+            </div>
+
+          )}
+
+
+          {/* RESET BUTTON */}
+
+          <button
+            className="btn btn-primary w-full mt-4"
+            onClick={handleResetPassword}
+            disabled={loading}
+          >
+
+            {loading ? (
+
+              <>
+                <span className="loading loading-spinner"></span>
+                Resetting...
+              </>
+
+            ) : (
+
+              "Reset Password"
+
+            )}
+
+          </button>
+
+
+          {/* BACK TO LOGIN */}
+
+          <p
+            className="text-center mt-4 cursor-pointer hover:underline"
+            onClick={() =>
+              navigate("/login")
+            }
+          >
+            ← Back to Login
+          </p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  );
 };
 
 export default ResetPassword;
