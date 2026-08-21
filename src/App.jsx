@@ -13,6 +13,8 @@ import Connections from "./components/Connections";
 import Requests from "./components/Requests";
 import Premium from "./components/Premium";
 import Chat from "./components/Chat";
+import Terms from "./components/Terms";
+import Privacy from "./components/Privacy";
 
 function App() {
   return (
@@ -36,6 +38,8 @@ function App() {
             </Route>
 
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/privacy" element={<Privacy />} />
 
 </Routes>
     </BrowserRouter>
