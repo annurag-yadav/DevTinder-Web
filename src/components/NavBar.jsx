@@ -10,6 +10,23 @@ const NavBar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const getInitialTheme = () => {
+    const savedTheme = localStorage.getItem("talentlink-theme");
+
+    if (savedTheme === "dark" || savedTheme === "light") {
+      return savedTheme;
+    }
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const [theme, setTheme] = useState(getInitialTheme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("talentlink-theme", theme);
+  }, [theme]);
+
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
@@ -101,10 +118,20 @@ const NavBar = () => {
 
         {/* Logo */}
         <div className="flex-1">
-          <Link to="/" className="btn btn-ghost text-xl">
+          <Link to="/" className="btn btn-ghost text-xl px-3 font-semibold tracking-tight">
             TalentLink
           </Link>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="btn btn-ghost btn-sm rounded-full border border-base-content/15 bg-base-100/80 px-3 text-sm font-medium text-base-content hover:bg-base-200"
+          aria-label="Toggle dark mode"
+        >
+          <span className="text-base">{theme === "dark" ? "☀️" : "🌙"}</span>
+          <span className="hidden sm:inline">{theme === "dark" ? "Light" : "Dark"}</span>
+        </button>
 
         {/* Search */}
         {user && (
