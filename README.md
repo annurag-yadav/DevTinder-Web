@@ -1,6 +1,12 @@
-# DevTinder Web
+# TalentLink
 
-A full-stack developer networking web application inspired by Tinder — built for developers to discover peers, send connection requests, and grow their professional network. This repository contains the **frontend** client built with React, Redux, and Tailwind CSS, which communicates with a REST API backend over HTTP with cookie-based authentication.
+**Connect through skills. Build your network.**
+
+TalentLink is a professional networking platform for developers, students, and tech professionals. Discover people by skills, domains, and experience — send connection requests, grow your network, and chat in real time.
+
+**Live site:** [https://talentlink.in](https://talentlink.in)
+
+> This repository is the **frontend** for TalentLink. The local folder may still be named `DevTinder-Web` from an earlier project name; the product and domain are **TalentLink**.
 
 ---
 
@@ -10,45 +16,79 @@ A full-stack developer networking web application inspired by Tinder — built f
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
-- [Prerequisites](#prerequisites)
-- [Installation & Setup](#installation--setup)
-- [Environment Configuration](#environment-configuration)
-- [Application Routes](#application-routes)
-- [API Integration](#api-integration)
-- [State Management (Redux)](#state-management-redux)
-- [Application Workflow](#application-workflow)
-- [Component Breakdown](#component-breakdown)
-- [Planned Features](#planned-features)
-- [Resume Points](#resume-points)
+- [Getting Started](#getting-started)
+- [Available Scripts](#available-scripts)
+- [Environment & API Configuration](#environment--api-configuration)
+- [Routes](#routes)
+- [State Management](#state-management)
+- [Premium Memberships](#premium-memberships)
+- [Deployment Notes](#deployment-notes)
+- [Contributing](#contributing)
+- [Author & Links](#author--links)
+- [License](#license)
 
 ---
 
 ## Overview
 
-**DevTinder** is a social platform where developers can:
+TalentLink helps developers and students find meaningful professional connections based on what actually matters in tech — **skills**, **domains**, **experience**, and **shared interests**.
 
-1. **Sign up / Log in** with email and password
-2. **Browse a feed** of developer profiles one at a time
-3. **Express interest or ignore** profiles (similar to swipe right/left)
-4. **Receive and review** incoming connection requests
-5. **View accepted connections** and manage their profile
+Instead of a generic social feed, TalentLink uses a discovery flow similar to modern matching apps:
 
-The frontend is a Single Page Application (SPA) that uses **React Router** for navigation, **Redux Toolkit** for global state, and **Axios** for API communication. All authenticated requests use `withCredentials: true` to send session cookies to the backend.
+1. Browse curated profiles in your **Feed**
+2. Mark profiles as **Interested** or **Ignore**
+3. When both sides are interested, you become **Connections**
+4. Start **real-time chat** with your connections
+5. **Search** for people by name, skill, domain, role, or organization
+
+The app includes profile onboarding, protected routes, premium tiers powered by Razorpay, and legal pages (Terms of Service & Privacy Policy).
 
 ---
 
 ## Features
 
-| Feature | Description |
-|---------|-------------|
-| **Authentication** | Login and signup with email/password; session managed via HTTP cookies |
-| **Protected Routes** | Unauthenticated users are redirected to `/login` on 401 responses |
-| **Developer Feed** | Displays one profile at a time from a curated list of users |
-| **Interest / Ignore** | Send connection requests or skip profiles directly from the feed |
-| **Profile Management** | Edit name, photo, age, gender, and bio with live preview |
-| **Connection Requests** | Accept or reject incoming requests from other developers |
-| **Connections List** | View all accepted connections with profile details |
-| **Responsive UI** | Built with Tailwind CSS and DaisyUI component library |
+### Authentication & Account
+
+- User **signup** and **login** with email and password
+- **Forgot password** flow with email reset link
+- **Reset password** page for setting a new password
+- Session-based auth using **HTTP-only cookies** (`withCredentials: true`)
+- **Protected routes** — authenticated pages redirect to `/login` when not signed in
+
+### Profile & Onboarding
+
+- Multi-step **profile setup** after signup (domains, skills, experience, status, role, organization)
+- **Edit profile** with live preview card
+- **Public profile** pages viewable at `/profile/:userId`
+- Profile completion gate — incomplete profiles are redirected to `/profile/setup`
+
+### Discovery & Networking
+
+- **Feed** — browse recommended profiles one at a time with match percentage
+- **Interested / Ignore** actions on feed cards
+- **Connection requests** — review incoming requests (accept or reject)
+- **Connections** — list of accepted connections with quick access to chat
+- **Search** — debounced navbar search + full paginated search results page
+
+### Real-Time Chat
+
+- One-to-one messaging between connected users
+- Powered by **Socket.io** for live message delivery
+- Chat history loaded from REST API on open
+
+### Premium (Razorpay)
+
+- **Silver** — ₹199 / 3 months
+- **Gold** — ₹399 / 6 months (recommended)
+- Secure checkout via Razorpay
+- Premium badge and enhanced networking limits
+
+### Legal & UI
+
+- Terms of Service (`/terms`)
+- Privacy Policy (`/privacy`)
+- Responsive layout with **Tailwind CSS** and **DaisyUI**
+- Dark-themed, modern UI with navbar, footer, and loading states
 
 ---
 
@@ -56,330 +96,273 @@ The frontend is a Single Page Application (SPA) that uses **React Router** for n
 
 | Layer | Technology |
 |-------|------------|
-| **Framework** | React 19 |
-| **Build Tool** | Vite 8 |
-| **Routing** | React Router DOM v7 |
-| **State Management** | Redux Toolkit + React-Redux |
-| **HTTP Client** | Axios |
-| **Styling** | Tailwind CSS v4, DaisyUI |
-| **Compiler** | React Compiler (via Babel plugin) |
-| **Linting** | ESLint |
+| Framework | [React 19](https://react.dev/) |
+| Build Tool | [Vite 8](https://vite.dev/) |
+| Routing | [React Router DOM 7](https://reactrouter.com/) |
+| State | [Redux Toolkit](https://redux-toolkit.js.org/) |
+| HTTP Client | [Axios](https://axios-http.com/) |
+| Styling | [Tailwind CSS 4](https://tailwindcss.com/) + [DaisyUI](https://daisyui.com/) |
+| Real-Time | [Socket.io Client](https://socket.io/) |
+| Payments | [Razorpay Checkout](https://razorpay.com/) |
+| Compiler | React Compiler (Babel plugin) |
+| Linting | ESLint |
 
 ---
 
 ## Project Structure
 
 ```
-DevTinder-Web/
+DevTinder-Web/                 # Local folder name (product: TalentLink)
 ├── public/
 │   └── icons.svg
 ├── src/
 │   ├── components/
-│   │   ├── Body.jsx          # Layout wrapper, auth check on mount
-│   │   ├── NavBar.jsx        # Top navigation, user menu, logout
-│   │   ├── Login.jsx         # Login & signup forms
-│   │   ├── Feed.jsx          # Developer discovery feed
-│   │   ├── UserCard.jsx      # Reusable profile card (feed & preview)
-│   │   ├── Profile.jsx       # Profile page wrapper
-│   │   ├── EditProfile.jsx   # Profile edit form with live preview
-│   │   ├── Connections.jsx   # List of accepted connections
-│   │   ├── Requests.jsx      # Incoming connection requests
-│   │   └── Footer.jsx        # Footer component (optional)
+│   │   ├── Body.jsx             # App shell: navbar, outlet, footer, auth bootstrap
+│   │   ├── NavBar.jsx           # Navigation, search, logout
+│   │   ├── Footer.jsx
+│   │   ├── Login.jsx            # Login, signup, forgot password
+│   │   ├── ResetPassword.jsx
+│   │   ├── Feed.jsx             # Discovery feed
+│   │   ├── UserCard.jsx         # Profile card with Interested/Ignore
+│   │   ├── Profile.jsx
+│   │   ├── EditProfile.jsx
+│   │   ├── ProfileSetup.jsx     # Onboarding wizard
+│   │   ├── PublicProfile.jsx
+│   │   ├── Connections.jsx
+│   │   ├── Requests.jsx
+│   │   ├── Chat.jsx             # Real-time messaging
+│   │   ├── SearchResults.jsx
+│   │   ├── Premium.jsx          # Razorpay membership
+│   │   ├── ProtectedRoute.jsx
+│   │   ├── Terms.jsx
+│   │   └── Privacy.jsx
 │   ├── utils/
-│   │   ├── appStore.js       # Redux store configuration
-│   │   ├── constants.js      # Backend API base URL
-│   │   ├── userSlice.js      # Authenticated user state
-│   │   ├── feedSlice.js      # Feed profiles state
-│   │   ├── conectionSlice.js # Connections state
-│   │   └── requestSlice.js   # Pending requests state
-│   ├── App.jsx               # Root component, routes, Redux provider
-│   ├── main.jsx              # React DOM entry point
-│   └── index.css             # Global styles & Tailwind imports
+│   │   ├── appStore.js          # Redux store configuration
+│   │   ├── userSlice.js
+│   │   ├── feedSlice.js
+│   │   ├── conectionSlice.js
+│   │   ├── requestSlice.js
+│   │   ├── constants.js         # API base URL
+│   │   └── socket.js            # Socket.io connection helper
+│   ├── App.jsx                  # Route definitions
+│   ├── main.jsx                 # React entry point
+│   └── index.css                # Tailwind + DaisyUI imports
 ├── index.html
 ├── vite.config.js
+├── eslint.config.js
 ├── package.json
 └── README.md
 ```
 
 ---
 
-## Prerequisites
+## Getting Started
 
-Before running this project, ensure you have:
+### Prerequisites
 
-- **Node.js** (v18 or higher recommended)
-- **npm** or **yarn**
-- **DevTinder Backend API** running on `http://localhost:3000` (separate repository)
+- [Node.js](https://nodejs.org/) (v18 or newer recommended)
+- [npm](https://www.npmjs.com/) (comes with Node.js)
+- A running **TalentLink backend API** (required for auth, feed, chat, payments, etc.)
 
----
+### Installation
 
-## Installation & Setup
+1. **Clone the repository**
 
-### 1. Clone the repository
+   ```bash
+   git clone https://github.com/annurag-yadav/DevTinder-Web.git
+   cd DevTinder-Web
+   ```
 
-```bash
-git clone https://github.com/<your-username>/DevTinder-Web.git
-cd DevTinder-Web
-```
+2. **Install dependencies**
 
-### 2. Install dependencies
+   ```bash
+   npm install
+   ```
 
-```bash
-npm install
-```
+3. **Start the development server**
 
-### 3. Start the backend server
+   ```bash
+   npm run dev
+   ```
 
-Make sure the DevTinder backend API is running on port `3000`. Refer to the backend repository for setup instructions.
+4. Open the URL shown in your terminal (typically `http://localhost:5173`).
 
-### 4. Start the development server
+### Backend Requirement
 
-```bash
-npm run dev
-```
+This frontend expects a backend server with REST endpoints and Socket.io support.
 
-The app will be available at `http://localhost:5173` (default Vite port).
+| Environment | API Base URL | Socket Path |
+|-------------|--------------|-------------|
+| Local dev | `http://localhost:3000` | Direct to backend URL |
+| Production | `/api` (proxied) | `/api/socket.io` |
 
-### 5. Build for production
-
-```bash
-npm run build
-npm run preview   # Preview production build locally
-```
+Make sure your backend is running on **port 3000** during local development, or update `src/utils/constants.js` if your setup differs.
 
 ---
 
-## Environment Configuration
-
-The backend API URL is defined in `src/utils/constants.js`:
-
-```javascript
-export const BaseURL = "http://localhost:3000";
-```
-
-Update this value when deploying to production or pointing to a different backend instance.
-
----
-
-## Application Routes
-
-| Route | Component | Access | Description |
-|-------|-----------|--------|-------------|
-| `/` | `Feed` | Authenticated | Main feed — browse developer profiles |
-| `/login` | `Login` | Public | Login and signup page |
-| `/profile` | `Profile` | Authenticated | Edit user profile |
-| `/connections` | `Connections` | Authenticated | View accepted connections |
-| `/requests` | `Requests` | Authenticated | Review incoming connection requests |
-
-All routes are nested under the `Body` layout, which renders the `NavBar` and checks authentication on every page load.
-
----
-
-## API Integration
-
-All API calls use **Axios** with `withCredentials: true` for cookie-based session authentication.
-
-| Method | Endpoint | Purpose |
-|--------|----------|---------|
-| `POST` | `/login` | Authenticate user |
-| `POST` | `/signup` | Register new user |
-| `POST` | `/logout` | End session |
-| `GET` | `/profile/view` | Fetch logged-in user profile |
-| `PATCH` | `/profile/edit` | Update profile fields |
-| `GET` | `/feed` | Get list of profiles to browse |
-| `POST` | `/request/send/:status/:userId` | Send interest (`interested`) or ignore (`ignored`) |
-| `GET` | `/user/requests/received` | Fetch pending incoming requests |
-| `POST` | `/request/review/:status/:requestId` | Accept (`accepted`) or reject (`rejected`) a request |
-| `GET` | `/user/connections` | Fetch all accepted connections |
-
----
-
-## State Management (Redux)
-
-The app uses **Redux Toolkit** with four slices:
-
-| Slice | State Shape | Key Actions |
-|-------|-------------|-------------|
-| `user` | `User object \| null` | `addUser`, `removeUser` |
-| `feed` | `User[] \| null` | `addFeed`, `removeUserFromFeed` |
-| `connections` | `User[] \| null` | `addConnections`, `removeConnections` |
-| `requests` | `Request[] \| null` | `addRequests`, `removeRequest` |
-
-The Redux store is provided at the app root via `<Provider store={appstore}>` in `App.jsx`.
-
----
-
-## Application Workflow
-
-### High-Level Flow
-
-```
-User opens app
-      │
-      ▼
-Body.jsx checks session ──GET /profile/view──► Backend
-      │                                              │
-      ├── 401 Unauthorized ──► Redirect to /login    │
-      │                                              │
-      └── 200 OK ──► Store user in Redux ◄───────────┘
-      │
-      ▼
-User lands on Feed (/)
-      │
-      ▼
-GET /feed ──► Display first profile in UserCard
-      │
-      ├── "Interested" ──POST /request/send/interested/:id──► Remove from feed
-      │
-      └── "Ignore"     ──POST /request/send/ignored/:id────► Remove from feed
-```
-
-### Authentication Flow
-
-```mermaid
-flowchart TD
-    A[User visits any page] --> B[Body.jsx mounts]
-    B --> C{User in Redux?}
-    C -->|Yes| D[Render page]
-    C -->|No| E[GET /profile/view]
-    E --> F{Response status}
-    F -->|200 OK| G[dispatch addUser]
-    G --> D
-    F -->|401| H[Navigate to /login]
-    H --> I{Login or Signup?}
-    I -->|Login| J[POST /login]
-    I -->|Signup| K[POST /signup]
-    J --> L[dispatch addUser → Navigate to /]
-    K --> M[dispatch addUser → Navigate to /profile]
-```
-
-### Connection Request Flow
-
-```mermaid
-sequenceDiagram
-    participant UserA as User A (Sender)
-    participant Frontend as DevTinder Frontend
-    participant Backend as DevTinder API
-    participant UserB as User B (Receiver)
-
-    UserA->>Frontend: Clicks "Interested" on User B's card
-    Frontend->>Backend: POST /request/send/interested/:userId
-    Backend->>Backend: Create pending request
-    Frontend->>Frontend: removeUserFromFeed(userId)
-
-    UserB->>Frontend: Opens /requests page
-    Frontend->>Backend: GET /user/requests/received
-    Backend-->>Frontend: List of pending requests
-    UserB->>Frontend: Clicks "Accept"
-    Frontend->>Backend: POST /request/review/accepted/:requestId
-    Backend->>Backend: Mark connection as accepted
-    Frontend->>Frontend: removeRequest(requestId)
-
-    UserA->>Frontend: Opens /connections page
-    Frontend->>Backend: GET /user/connections
-    Backend-->>Frontend: User B appears in connections list
-```
-
-### Feed Interaction Flow
-
-1. **Feed loads** — `Feed.jsx` fetches profiles via `GET /feed` and stores them in Redux.
-2. **One card at a time** — Only the first profile in the feed array is rendered via `UserCard`.
-3. **User action** — Clicking **Interested** or **Ignore** sends a POST request and removes that user from the local feed state.
-4. **Next profile** — The next user in the array automatically becomes visible.
-5. **Empty feed** — When no profiles remain, a "No new users found" message is shown.
-
-### Profile Edit Flow
-
-1. User navigates to `/profile`.
-2. `EditProfile.jsx` pre-fills the form with current Redux user data.
-3. A live `UserCard` preview updates as the user types.
-4. On **Save**, a `PATCH /profile/edit` request updates the backend.
-5. Redux user state is updated and a success toast is displayed.
-
----
-
-## Component Breakdown
-
-| Component | Responsibility |
-|-----------|----------------|
-| **App.jsx** | Wraps app with Redux Provider and React Router; defines all routes |
-| **Body.jsx** | Layout shell with NavBar; validates session on mount |
-| **NavBar.jsx** | Brand link, welcome message, avatar dropdown, logout |
-| **Login.jsx** | Toggle between login/signup forms; dispatches user to Redux |
-| **Feed.jsx** | Fetches and displays developer profiles for discovery |
-| **UserCard.jsx** | Renders profile card with Interested/Ignore action buttons |
-| **EditProfile.jsx** | Form to update profile with real-time card preview |
-| **Requests.jsx** | Lists incoming requests with Accept/Reject buttons |
-| **Connections.jsx** | Displays all mutually accepted developer connections |
-
----
-
-## Planned Features
-
-The following routes and components are prepared but currently commented out in the codebase:
-
-- **Real-time Chat** — `/chat/:targetUserId` route and Chat component
-- **Premium Subscription** — `/premium` route and Premium component
-
----
-
-## Resume Points
-
-Use these bullet points when adding **DevTinder** to your resume. Pick 3–5 that best match the role you are applying for.
-
-### Project Description (one-liner)
-
-> Built a developer networking web app (Tinder-style) enabling users to discover peers, send connection requests, and manage professional profiles — full-stack SPA with React, Redux, and REST API integration.
-
-### Technical Bullet Points
-
-- Developed a **React 19 SPA** with **Vite**, implementing client-side routing via **React Router v7** and global state management using **Redux Toolkit** across 4 feature slices (user, feed, connections, requests).
-
-- Implemented **cookie-based authentication** with Axios interceptors and protected route logic; handled session validation, login/signup flows, and automatic redirect on 401 unauthorized responses.
-
-- Built a **Tinder-style developer feed** that fetches profiles from a REST API, displays one card at a time, and supports interest/ignore actions with optimistic UI updates via Redux.
-
-- Designed and integrated **10+ REST API endpoints** for authentication, profile management, connection requests, and feed discovery using Axios with credential-based session handling.
-
-- Created a **profile management module** with live preview, form validation, PATCH updates, and toast notifications using **Tailwind CSS** and **DaisyUI** components.
-
-- Architected a **modular component structure** (Feed, UserCard, Requests, Connections, EditProfile) with reusable UI patterns and separation of concerns between presentation and state logic.
-
-- Applied **React Compiler** optimizations and modern React patterns including hooks (`useState`, `useEffect`, `useSelector`, `useDispatch`) for efficient re-renders and clean state flow.
-
-- Styled a responsive, accessible UI using **Tailwind CSS v4** and **DaisyUI**, including navbar dropdowns, card layouts, form controls, and toast alerts.
-
-### Impact-Oriented Bullet Points (customize with your metrics)
-
-- Engineered end-to-end user flows for signup → profile setup → feed discovery → connection matching, mirroring real-world social networking product patterns.
-
-- Reduced redundant API calls by caching feed and user data in Redux store and skipping re-fetches when state is already populated.
-
-- Collaborated with a **Node.js/Express backend** (REST API) implementing JWT/cookie session auth, MongoDB data persistence, and connection request state machines.
-
-### Skills to List Alongside This Project
-
-`React` · `Redux Toolkit` · `JavaScript (ES6+)` · `React Router` · `Axios` · `REST APIs` · `Tailwind CSS` · `Vite` · `Git` · `Responsive Web Design`
-
----
-
-## Scripts
+## Available Scripts
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start Vite development server |
-| `npm run build` | Build for production |
-| `npm run preview` | Preview production build |
-| `npm run lint` | Run ESLint |
+| `npm run dev` | Start Vite dev server with hot reload |
+| `npm run build` | Create production build in `dist/` |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across the project |
+
+---
+
+## Environment & API Configuration
+
+API routing is handled in `src/utils/constants.js`:
+
+```javascript
+const API_BASE_URL = location.hostname === "localhost"
+  ? "http://localhost:3000"
+  : "/api";
+
+export const BaseURL = API_BASE_URL;
+```
+
+Socket connections follow the same pattern in `src/utils/socket.js`:
+
+- **Local:** connects to `http://localhost:3000`
+- **Production:** connects to `/` with path `/api/socket.io`
+
+No `.env` file is required for basic local development, but you may add one later if you introduce Vite environment variables (e.g. `VITE_API_URL`).
+
+### Key API Endpoints Used (Frontend)
+
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| POST | `/signup` | Register new user |
+| POST | `/login` | Authenticate user |
+| POST | `/logout` | End session |
+| POST | `/forgot-password` | Send reset email |
+| GET | `/profile/view` | Get logged-in user |
+| PATCH | `/profile/edit` | Update profile |
+| POST | `/profile/setup` | Complete onboarding |
+| GET | `/profile/:userId` | Public profile |
+| GET | `/feed` | Discovery feed |
+| POST | `/request/send/:status/:userId` | Send interested/ignored |
+| GET | `/user/requests/received` | Incoming requests |
+| POST | `/request/review/:status/:id` | Accept/reject request |
+| GET | `/user/connections` | List connections |
+| GET | `/search?q=...` | Search users |
+| GET | `/chat/:targetUserId` | Chat history |
+| GET | `/premium/verify` | Check premium status |
+| POST | `/payment/create` | Create Razorpay order |
+
+---
+
+## Routes
+
+| Path | Access | Description |
+|------|--------|-------------|
+| `/` | Protected | Discovery feed |
+| `/login` | Public | Login, signup, forgot password |
+| `/profile` | Protected | Edit your profile |
+| `/profile/setup` | Protected | Onboarding after signup |
+| `/profile/:userId` | Protected | View another user's profile |
+| `/search?q=...` | Protected | Paginated search results |
+| `/connections` | Protected | Your connections |
+| `/requests` | Protected | Incoming connection requests |
+| `/premium` | Protected | Premium membership plans |
+| `/chat/:targetUserId` | Protected | Real-time chat |
+| `/reset-password` | Public | Password reset form |
+| `/terms` | Public | Terms of Service |
+| `/privacy` | Public | Privacy Policy |
+
+---
+
+## State Management
+
+Redux Toolkit slices in `src/utils/`:
+
+| Slice | State | Purpose |
+|-------|-------|---------|
+| `userSlice` | Current logged-in user | Auth & profile data |
+| `feedSlice` | Feed users | Discovery queue |
+| `conectionSlice` | Connections list | Accepted connections |
+| `requestSlice` | Pending requests | Incoming requests |
+
+The store is provided at the app root in `App.jsx` via `<Provider store={appstore}>`.
+
+---
+
+## Premium Memberships
+
+TalentLink offers two paid tiers via **Razorpay**:
+
+### Silver — ₹199 / 3 months
+
+- Chat with other members
+- 10 connection requests per day
+- Premium profile badge
+- Premium networking features
+
+### Gold — ₹399 / 6 months *(Recommended)*
+
+- Everything in Silver
+- Unlimited connection requests
+- Higher visibility in networking
+- 6 months of premium access
+
+Razorpay checkout is loaded from `index.html`. Payment verification runs through `/premium/verify` after a successful transaction.
+
+---
+
+## Deployment Notes
+
+1. **Build the frontend**
+
+   ```bash
+   npm run build
+   ```
+
+2. **Serve the `dist/` folder** behind your web server (Nginx, Vercel, Netlify, etc.).
+
+3. **Reverse-proxy `/api`** to your backend so production requests hit the same origin:
+
+   - REST API → backend server
+   - WebSocket → backend at `/api/socket.io`
+
+4. Point your domain **talentlink.in** to the deployed frontend.
+
+5. Ensure backend CORS and cookie settings allow credentials from your production domain.
+
+---
+
+## Contributing
+
+Contributions, bug reports, and feature suggestions are welcome.
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Commit your changes with a clear message
+4. Push to your fork and open a Pull Request
+
+Please keep changes focused and match the existing code style (functional React components, Redux for shared state, Tailwind/DaisyUI for styling).
+
+---
+
+## Author & Links
+
+**Anurag Yadav**
+
+- Website: [talentlink.in](https://talentlink.in)
+- GitHub: [@annurag-yadav](https://github.com/annurag-yadav)
+- LinkedIn: [Anurag Yadav](https://www.linkedin.com/in/-anuragyadav)
 
 ---
 
 ## License
 
-This project is for educational and portfolio purposes.
+This project is a student-built portfolio / academic project. All rights reserved unless otherwise specified by the author.
+
+For questions, reach out via the contact link on [talentlink.in](https://talentlink.in) or open an issue on GitHub.
 
 ---
 
-## Author
-
-**Your Name** — [GitHub](https://github.com/your-username) · [LinkedIn](https://linkedin.com/in/your-profile)
+<p align="center">
+  Built with ❤️ for the developer community — <strong>TalentLink</strong>
+</p>
